@@ -46,7 +46,7 @@ Musuan, Bukidnon, Philippines\\
 \maketitle
 
 \begin{abstract}
-Manual deployment of student web projects is slow, error-prone and rarely repeatable, while commercial continuous integration and deployment (CI/CD) services and cloud hosting are often beyond a student budget. This paper reports the design and evaluation of a pipeline that tests and deploys a Node.js web API from a student laptop to a deployment server using only free tools. Code is pushed to a public GitHub repository, where a GitHub-hosted runner lints and tests every push and pull request. When the tests pass on the protected main branch, a self-hosted runner on an Ubuntu Server virtual machine with no public IP address builds a Docker image tagged with the commit ID, restarts the container and verifies through a health check that the new version is live. The pipeline was evaluated with three end-to-end scenarios: a good change, a deliberately broken change and a faulty release that was rolled back. Over six deployments, the mean time from merge to a verified live release was 56.5~s (range 52--68~s), of which the deploy job took a mean of 39.7~s. The broken change was stopped by the required test check and never reached the server, and the faulty release was restored in 12.4~s by restarting the image of the previous commit, or in 68~s by reverting it through the pipeline. The results show that a fully free toolchain can give students an automated, traceable and recoverable release process within about one minute per change.
+Manual deployment of student web projects is slow, error-prone and rarely repeatable, while commercial continuous integration and deployment (CI/CD) services and cloud hosting are often beyond a student budget. This paper reports the design and evaluation of a pipeline that tests and deploys a Node.js web API from a student laptop to a deployment server using only free tools. Code is pushed to a public GitHub repository, where a GitHub-hosted runner lints and tests every push and pull request. When the tests pass on the protected main branch, a self-hosted runner on an Ubuntu Server virtual machine with no public IP address builds a Docker image tagged with the commit ID, restarts the container and verifies through a health check that the new version is live. The pipeline was evaluated with three end-to-end scenarios: a good change, a deliberately broken change and a faulty release that was rolled back. Over eight deployments, the mean time from merge to a verified live release was 56.5~s (range 52--68~s), of which the deploy job took a mean of 39.9~s. The broken change was stopped by the required test check and never reached the server, and the faulty release was restored in 12.4~s by restarting the image of the previous commit, or in 68~s by reverting it through the pipeline. The results show that a fully free toolchain can give students an automated, traceable and recoverable release process within about one minute per change.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -184,33 +184,33 @@ C -- Method 2 & previous commit's image restarted, no rebuild & 12.4~s\\
 \end{tabular}
 \end{table}
 
-Fig.~\ref{fig:times} breaks down all six deployments, which include the first deployment, Tests~A and C, and two documentation changes. The mean push-to-live time was 56.5~s (median 54~s, range 52--68~s, $n = 6$). The deploy job was the largest part and was very stable, with a mean of 39.7~s (range 39--42~s). The test job took a mean of 9.7~s (range 7--18~s), and the self-hosted runner picked up the deploy job 4--5~s after the test job finished. The slowest run, at 68~s, was caused mainly by an 18~s test job on the GitHub-hosted runner. On the six pull-request runs, the test job took a mean of 8.8~s to report a result.
+Fig.~\ref{fig:times} breaks down all eight deployments, which include the first deployment, Tests~A and C, and four documentation changes. The mean push-to-live time was 56.5~s (median 55~s, range 52--68~s, $n = 8$). The deploy job was the largest part and was very stable, with a mean of 39.9~s (range 39--42~s). The test job took a mean of 9.6~s (range 7--18~s), and the self-hosted runner picked up the deploy job 3--5~s after the test job finished. The slowest run, at 68~s, was caused mainly by an 18~s test job on the GitHub-hosted runner. On the eight pull-request runs, the test job took a mean of 8.9~s to report a result.
 
 \begin{figure}[t]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  ybar stacked, bar width=13pt, width=\columnwidth, height=5.4cm,
+  ybar stacked, bar width=11pt, width=\columnwidth, height=5.4cm,
   ymin=0, ymax=75, ylabel={Time (s)}, ylabel style={font=\footnotesize},
-  symbolic x coords={D1,D2,D3,D4,D5,D6},
-  xtick=data, xticklabels={{First},{Test A},{Test C bad},{Test C revert},{Docs 1},{Docs 2}},
+  symbolic x coords={D1,D2,D3,D4,D5,D6,D7,D8},
+  xtick=data, xticklabels={{First},{Test A},{Test C bad},{Test C revert},{Docs 1},{Docs 2},{Docs 3},{Docs 4}},
   x tick label style={font=\scriptsize, rotate=25, anchor=east},
   y tick label style={font=\footnotesize},
   legend style={font=\scriptsize, at={(0.5,1.03)}, anchor=south, legend columns=4, draw=none},
   nodes near coords style={font=\scriptsize},
 ]
-\addplot[fill=black!15, draw=black] coordinates {(D1,7) (D2,7) (D3,7) (D4,18) (D5,12) (D6,7)};
-\addplot[fill=black!45, draw=black] coordinates {(D1,4) (D2,5) (D3,4) (D4,4) (D5,4) (D6,4)};
-\addplot[fill=white, draw=black, postaction={pattern=north east lines}] coordinates {(D1,40) (D2,39) (D3,39) (D4,42) (D5,39) (D6,39)};
-\addplot[fill=black!80, draw=black] coordinates {(D1,3) (D2,2) (D3,4) (D4,4) (D5,3) (D6,2)};
+\addplot[fill=black!15, draw=black] coordinates {(D1,7) (D2,7) (D3,7) (D4,18) (D5,12) (D6,7) (D7,9) (D8,10)};
+\addplot[fill=black!45, draw=black] coordinates {(D1,4) (D2,5) (D3,4) (D4,4) (D5,4) (D6,4) (D7,4) (D8,3)};
+\addplot[fill=white, draw=black, postaction={pattern=north east lines}] coordinates {(D1,40) (D2,39) (D3,39) (D4,42) (D5,39) (D6,39) (D7,41) (D8,40)};
+\addplot[fill=black!80, draw=black] coordinates {(D1,3) (D2,2) (D3,4) (D4,4) (D5,3) (D6,2) (D7,3) (D8,3)};
 \legend{test, wait for runner, deploy, other}
 \end{axis}
 \end{tikzpicture}
-\caption{Push-to-live time of each deployment, split into the test job, the wait for the self-hosted runner, the deploy job and other workflow overhead. Totals: 54, 53, 54, 68, 58 and 52~s.}
+\caption{Push-to-live time of each deployment, split into the test job, the wait for the self-hosted runner, the deploy job and other workflow overhead. Totals: 54, 53, 54, 68, 58, 52, 57 and 56~s.}
 \label{fig:times}
 \end{figure}
 
-Across all 14 workflow runs, the one change with a failing test was the only change blocked, and it never reached the server. The faulty release in Test~C passed all tests and was deployed, so the change failure rate over the six deployments was 1 in 6. That failure was deliberate, but it shows a real limit of the gate.
+Across all 18 workflow runs, the one change with a failing test was the only change blocked, and it never reached the server. The faulty release in Test~C passed all tests and was deployed, so the change failure rate over the eight deployments was 1 in 8. That failure was deliberate, but it shows a real limit of the gate.
 
 %=====================================================================
 \section{Discussion}
@@ -220,13 +220,13 @@ Test~C exposed the main limitation: the gate is only as good as the tests. A rel
 
 Other limitations follow from the setup. The virtual machine must be running for deployments to happen; while it is off, deploy jobs wait in the queue. There is a single server and no staging environment, so a release is tested on production directly. A self-hosted runner on a public repository is a security risk, because pull-request code could run on the student's machine. Here this was reduced by requiring approval for outside contributors and by never deploying pull requests. Finally, the server's logical volume used only 11.2~GB of the 25~GB virtual disk, and each deployment keeps an image of about 255~MB, so old images must be removed periodically.
 
-The evaluation also has threats to validity. The sample was small (six deployments, one application and one server) and all measurements were taken on one day on one laptop, so the times may differ on other hardware or networks. The first build on the server also downloaded the base image, while later builds reused cached layers. The application is very small, so build and test times for real projects will be longer, although the overhead added by the pipeline itself, about 4--5~s to pick up a job, should not grow.
+The evaluation also has threats to validity. The sample was small (eight deployments, one application and one server) and all measurements were taken on one day on one laptop, so the times may differ on other hardware or networks. The first build on the server also downloaded the base image, while later builds reused cached layers. The application is very small, so build and test times for real projects will be longer, although the overhead added by the pipeline itself, about 3--5~s to pick up a job, should not grow.
 
 %=====================================================================
 \section{Conclusion and Future Work}
 \textbf{RQ1:} Yes. A toolchain of free tools (Git, GitHub Actions, a self-hosted runner, Docker and an Ubuntu virtual machine) automatically tested and deployed every change from a student laptop to a server that has no public IP address.
 
-\textbf{RQ2:} The mean lead time from merge to a verified live release was 56.5~s over six deployments (range 52--68~s). Time to restore was 12.4~s with the emergency image rollback and 68~s after merging a revert through the pipeline.
+\textbf{RQ2:} The mean lead time from merge to a verified live release was 56.5~s over eight deployments (range 52--68~s). Time to restore was 12.4~s with the emergency image rollback and 68~s after merging a revert through the pipeline.
 
 \textbf{RQ3:} The required test check blocked the only change with a failing test, so no failing change reached the server. A release whose defect was not covered by any test was deployed, showing that the gate depends on test coverage.
 
