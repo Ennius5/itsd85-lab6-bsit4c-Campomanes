@@ -76,4 +76,4 @@ All in [docs/screenshots/](docs/screenshots/).
 | 7C | Test C – bad release live; Method 2 rollback; revert PR; Method 1 redeploy | [t7c-broken-live.png](docs/screenshots/t7c-broken-live.png), [t7c-method2-rollback.png](docs/screenshots/t7c-method2-rollback.png), [t7c-revert-pr-green.png](docs/screenshots/t7c-revert-pr-green.png), [t7c-method1-revert.png](docs/screenshots/t7c-method1-revert.png) |
 
 ## Paper
-[docs/paper.pdf](docs/paper.pdf) (in progress)
+[docs/paper.pdf](docs/paper.pdf) – IEEE conference paper. LaTeX source: [docs/paper/paper.tex](docs/paper/paper.tex) (build: `cd docs/paper && tectonic paper.tex`, then move `paper.pdf` up to `docs/`).
