@@ -1,5 +1,5 @@
 # ITSD 85 Lab 6: Automated CI/CD Pipeline
-Student(s): Ethan Campomanes   Section: BSIT 4C   Instructor: <name>
+Student(s): Ethan Campomanes   Section: BSIT 4C   Instructor: Rinante M. Buntod
 
 ## What this project does
 A small Node.js web API (Express) that is automatically linted, tested and deployed. Every push or pull request to `main` runs the tests on GitHub's free cloud runner. When the tests pass on `main`, a self-hosted runner on my own Ubuntu server rebuilds the Docker container and checks that the new version is live. The commit ID of each release is shown on the home page and on `/health`, so every deploy can be traced to a commit.
