@@ -1,0 +1,21 @@
+{
+  "name": "itsd85-cicd-lab",
+  "version": "1.0.0",
+  "description": "ITSD 85 Lab 6 - sample web API for an automated CI/CD pipeline",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test",
+    "lint": "eslint ."
+  },
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "globals": "^17.14.0"
+  }
+}
